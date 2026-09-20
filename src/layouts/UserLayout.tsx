@@ -9,7 +9,10 @@ import {
   Recycle, 
   Menu,
   X,
-  Leaf
+  Leaf,
+  ChevronDown,
+  User,
+  Package
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
@@ -25,6 +28,7 @@ const UserLayout: React.FC = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -99,23 +103,58 @@ const UserLayout: React.FC = () => {
             </Link>
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 ms-1">
+              <div className="relative flex items-center gap-3 ms-1">
                 <div className="hidden lg:flex flex-col items-end text-xs leading-none gap-1">
                   <span className="text-[var(--text-muted)] flex items-center gap-1"><Leaf size={12} className="text-[var(--primary)]" /> مرحباً</span>
                   <span className="font-bold text-[13px]">{user?.name}</span>
                 </div>
-                <div className="hidden sm:flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--brand-dark)] to-[var(--brand)] flex items-center justify-center text-white font-bold text-sm ring-1 ring-white/10">
+                <button 
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="hidden sm:flex items-center gap-1.5 p-1 pr-1 pl-2 rounded-full bg-[var(--bg-item)] border border-[var(--border)] hover:border-[var(--primary)]/20 hover:bg-[var(--primary-soft)] transition-all"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--brand-dark)] to-[var(--brand)] flex items-center justify-center text-white font-bold text-xs ring-1 ring-white/10">
                     {user?.name?.charAt(0) || 'U'}
                   </div>
-                </div>
-                <button 
-                  onClick={handleLogout}
-                  className="hidden sm:flex p-2.5 rounded-xl text-[var(--danger)] hover:bg-[var(--danger)]/10 border border-transparent hover:border-[var(--danger)]/20 transition-all"
-                  title="تسجيل الخروج"
-                >
-                  <LogOut size={18} strokeWidth={1.9} />
+                  <span className="text-[13px] font-bold hidden lg:inline">مرحبا {user?.name?.split(' ')[0]}</span>
+                  <ChevronDown size={14} className={`text-[var(--text-muted)] transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
                 </button>
+                {/* Compact avatar for <lg */}
+                <button 
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="sm:hidden w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--brand-dark)] to-[var(--brand)] flex items-center justify-center text-white font-bold text-sm ring-1 ring-white/10"
+                >
+                  {user?.name?.charAt(0) || 'U'}
+                </button>
+
+                {profileOpen && (
+                  <>
+                    <div className="fixed inset-0 z-30" onClick={() => setProfileOpen(false)} />
+                    <div className="absolute left-0 top-full mt-3 w-64 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.2)] overflow-hidden z-40 animate-in fade-in zoom-in duration-150">
+                      <div className="p-4 bg-gradient-to-l from-[var(--brand-dark)] to-[var(--brand)] text-white">
+                        <p className="text-xs opacity-70 flex items-center gap-1"><Leaf size={12} /> مرحبا {user?.name}</p>
+                        <p className="text-[11px] opacity-60 truncate mt-0.5">{user?.email}</p>
+                      </div>
+                      <div className="p-2 space-y-1">
+                        <Link to="/my-orders" onClick={() => setProfileOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[var(--bg-item)] text-sm font-medium transition-colors">
+                          <Package size={16} className="text-[var(--primary)]" /> طلباتي
+                        </Link>
+                        <Link to="/favorites" onClick={() => setProfileOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[var(--bg-item)] text-sm font-medium transition-colors">
+                          <Heart size={16} className="text-[var(--primary)]" strokeWidth={2} fill="none" /> المفضلة
+                        </Link>
+                        <Link to="/sell-scrap" onClick={() => setProfileOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[var(--bg-item)] text-sm font-medium transition-colors">
+                          <Recycle size={16} className="text-[var(--primary)]" /> بيع خردة
+                        </Link>
+                        <div className="border-t border-[var(--border)] my-1" />
+                        <button 
+                          onClick={() => { setProfileOpen(false); handleLogout(); }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[var(--danger)]/10 text-[var(--danger)] text-sm font-bold transition-colors"
+                        >
+                          <LogOut size={16} /> تسجيل الخروج
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <Link 
