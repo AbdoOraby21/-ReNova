@@ -1,5 +1,5 @@
 import React from 'react';
-const logoImg = '/logo.jpeg';
+import { Recycle } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
@@ -10,28 +10,28 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', showText = true, variant = 'default' }) => {
   const sizes = {
-    sm: { container: 'h-9', img: 'h-9', text: 'text-[1.05rem]' },
-    md: { container: 'h-10', img: 'h-10', text: 'text-xl' },
-    lg: { container: 'h-14', img: 'h-14', text: 'text-2xl' },
-    xl: { container: 'h-20', img: 'h-20', text: 'text-3xl' },
+    sm: { container: 'h-9 w-9', text: 'text-[1.05rem]', icon: 20 },
+    md: { container: 'h-10 w-10', text: 'text-xl', icon: 24 },
+    lg: { container: 'h-14 w-14', text: 'text-2xl', icon: 32 },
+    xl: { container: 'h-20 w-20', text: 'text-3xl', icon: 44 },
   };
 
   const s = sizes[size];
 
-  // For header / branding we show the official logo image preserving proportions
-  // logo.jpeg has dark green background, so we wrap with rounded overflow and subtle ring
+  // Green rounded square app-icon container with centered white recycling symbol
+  // Only the recycling symbol rotates slowly clockwise; the green shape stays static
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div
-        className={`relative shrink-0 overflow-hidden rounded-xl bg-[#052e08] ring-1 ring-white/10 shadow-sm flex items-center justify-center ${s.container} aspect-[1.15] sm:aspect-auto`}
-        style={{ minWidth: size === 'sm' ? 42 : size === 'md' ? 52 : size === 'lg' ? 68 : 84 }}
+        className={`relative shrink-0 overflow-hidden rounded-xl bg-[#052e08] ring-1 ring-white/10 shadow-sm flex items-center justify-center ${s.container}`}
+        aria-hidden="true"
       >
-        <img
-          src={logoImg}
-          alt="ReNova - E-Waste Recycling for a Greener Tomorrow"
-          className={`w-full h-full object-contain object-center ${s.img}`}
-          loading="eager"
-          decoding="async"
+        <Recycle
+          size={s.icon}
+          strokeWidth={2}
+          className="text-white animate-spin-slow shrink-0"
+          style={{ transformOrigin: 'center' }}
+          aria-label="Recycling symbol"
         />
       </div>
       {showText && (
