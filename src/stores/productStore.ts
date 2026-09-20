@@ -28,8 +28,32 @@ export const useProductStore = create<ProductStore>()(
       selectedCategory: 'الكل',
 
       seedProducts: () => {
-        if (get().products.length === 0) {
+        const current = get().products;
+        if (current.length === 0) {
           set({ products: mockProducts, categories: mockCategories });
+          return;
+        }
+        // Migration: fix broken Unsplash images and ensure fallback + missing categories
+        let needsUpdate = false;
+        const fixed = current.map(p => {
+          const mock = mockProducts.find(m => m.id === p.id);
+          // Fix known broken URL or missing image
+          if (!p.image || p.image.includes('1617038220319-276d3ac92e4c') || p.image.includes('w=1000') ) {
+            // Keep if valid but normalize to w=800 for performance, or replace broken one
+            if (p.image.includes('1617038220319-276d3ac92e4c') && mock) {
+              needsUpdate = true;
+              return { ...p, image: mock.image };
+            }
+          }
+          // Ensure category still exists, otherwise keep
+          return p;
+        });
+        if (needsUpdate || get().categories.length === 0) {
+          set({ products: fixed, categories: get().categories.length ? get().categories : mockCategories });
+        }
+        // If user cleared products but categories missing, restore
+        if (get().categories.length === 0) {
+          set({ categories: mockCategories });
         }
       },
 

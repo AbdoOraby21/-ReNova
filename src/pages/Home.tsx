@@ -5,6 +5,7 @@ import { useProductStore } from '../stores/productStore';
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { useCartStore } from '../stores/cartStore';
 import { useToast } from '../components/common/Toast';
+import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 const logoImg = '/logo.jpeg';
 
 const Home: React.FC = () => {
@@ -149,11 +150,11 @@ const Home: React.FC = () => {
                 className="group bg-[var(--bg-card)] border border-[var(--border)] rounded-[1.5rem] md:rounded-[1.75rem] overflow-hidden hover:border-[#0a3d0f]/20 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col hover:-translate-y-1"
               >
                 <div className="relative aspect-square overflow-hidden bg-[var(--bg-item)]">
-                  <img 
+                  <SafeImage 
                     src={product.image} 
                     alt={product.name}
+                    fallback={FALLBACK_IMAGE}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    loading="lazy"
                   />
                   <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
                     <button 

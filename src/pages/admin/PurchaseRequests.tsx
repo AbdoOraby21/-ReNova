@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShoppingBag, User, Phone, MapPin, Calendar, Clock, CreditCard, ChevronLeft } from 'lucide-react';
 import { useRequestStore } from '../../stores/requestStore';
 import { PurchaseStatus } from '../../types';
+import SafeImage, { FALLBACK_IMAGE } from '../../components/common/SafeImage';
 
 const PurchaseRequests: React.FC = () => {
   const { purchaseOrders, updatePurchaseStatus } = useRequestStore();
@@ -110,7 +111,7 @@ const PurchaseRequests: React.FC = () => {
                         <div key={idx} className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-[var(--border)]">
-                              <img src={item.image} alt="" className="w-full h-full object-cover" />
+                              <SafeImage src={item.image} alt="" fallback={FALLBACK_IMAGE} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col">
                               <span className="text-sm font-bold truncate max-w-[150px]">{item.name}</span>

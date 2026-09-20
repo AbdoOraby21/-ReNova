@@ -5,6 +5,7 @@ import { useFavoritesStore } from '../stores/favoritesStore';
 import { useCartStore } from '../stores/cartStore';
 import { useToast } from '../components/common/Toast';
 import { Link } from 'react-router-dom';
+import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 
 const Favorites: React.FC = () => {
   const { products } = useProductStore();
@@ -41,9 +42,10 @@ const Favorites: React.FC = () => {
               className="group bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--primary)] transition-all duration-300 flex flex-col"
             >
               <div className="relative aspect-square overflow-hidden bg-[var(--bg-item)]">
-                <img 
+                <SafeImage 
                   src={product.image} 
                   alt={product.name}
+                  fallback={FALLBACK_IMAGE}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute top-4 right-4 z-10">

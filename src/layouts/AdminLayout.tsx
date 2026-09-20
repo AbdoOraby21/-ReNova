@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Recycle, 
-  ShoppingBag, 
-  Package, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  Mail,
+  ShoppingCart,
+  Package,
+  Settings,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
   Menu,
   X,
-  Shield
+  ShieldCheck,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import Logo from '../components/common/Logo';
+import { useThemeStore } from '../stores/themeStore';
 
 const AdminLayout: React.FC = () => {
-  const { user, logout } = useAuthStore();
+  const { logout } = useAuthStore();
+  const { isDarkMode, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleLogout = () => {
@@ -32,141 +32,150 @@ const AdminLayout: React.FC = () => {
   const navItems = [
     { icon: LayoutDashboard, label: 'الرئيسية', path: '/admin' },
     { icon: Users, label: 'العملاء', path: '/admin/customers' },
-    { icon: Recycle, label: 'طلبات البيع', path: '/admin/requests' },
-    { icon: ShoppingBag, label: 'طلبات الشراء', path: '/admin/purchase-requests' },
+    { icon: Mail, label: 'طلبات البيع', path: '/admin/requests' },
+    { icon: ShoppingCart, label: 'طلبات الشراء', path: '/admin/purchase-requests' },
     { icon: Package, label: 'المنتجات', path: '/admin/products' },
     { icon: Settings, label: 'الإعدادات', path: '/admin/settings' },
   ];
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex overflow-hidden">
-      {/* Sidebar - Desktop */}
-      <aside 
-        className={`hidden lg:flex flex-col bg-[#052e08] text-white border-l border-white/10 transition-all duration-300 ${isSidebarOpen ? 'w-[272px]' : 'w-[84px]'}`}
-      >
-        <div className="h-[68px] px-4 flex items-center justify-between border-b border-white/10 shrink-0">
-          {isSidebarOpen ? (
-            <div className="flex items-center gap-3">
-              <Logo size="sm" variant="light" showText={true} />
+    <div className="min-h-screen flex bg-[#0a0a0a] text-white overflow-hidden" dir="rtl">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex flex-col w-[260px] shrink-0 bg-[#141414] border-l border-[#2a2a2a] h-screen sticky top-0">
+        {/* Logo Header */}
+        <div className="h-[72px] px-6 flex items-center justify-between border-b border-[#2a2a2a] shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#0f9d62] flex items-center justify-center">
+              <ShieldCheck size={20} className="text-white" />
             </div>
-          ) : (
-            <Logo size="sm" variant="light" showText={false} />
-          )}
-          <button 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/70 hover:text-white"
-            aria-label="Toggle sidebar"
-          >
-            {isSidebarOpen ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          </button>
+            <div className="flex flex-col">
+              <span className="font-black text-[15px] leading-none">Renova Admin</span>
+              <span className="text-[11px] text-white/50 font-medium">لوحة التحكم</span>
+            </div>
+          </div>
         </div>
 
-        <nav className="flex-grow p-3 mt-2 space-y-1 overflow-y-auto scrollbar-hide">
-          {navItems.map((item) => {
-            const active = location.pathname === item.path;
+        {/* Nav */}
+        <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto scrollbar-hide mt-2">
+          {navItems.map(item => {
+            const active = isActive(item.path);
             return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all text-sm ${
-                active 
-                  ? 'bg-white text-[#052e08] shadow-md font-bold' 
-                  : 'text-white/70 hover:bg-white/10 hover:text-white'
-              }`}
-              title={!isSidebarOpen ? item.label : undefined}
-            >
-              <item.icon size={20} strokeWidth={1.9} className={active ? 'text-[#0a3d0f]' : ''} />
-              {isSidebarOpen && <span className="whitespace-nowrap">{item.label}</span>}
-            </Link>
-          )})}
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[13px] font-bold transition-all ${
+                  active ? 'bg-[#0f9d62] text-white shadow-md' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <item.icon size={18} strokeWidth={1.9} className={active ? 'text-white' : 'text-white/60'} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="p-3 border-t border-white/10 space-y-3">
-          <div className={`flex items-center gap-3 p-3 rounded-xl bg-white/10 border border-white/10 ${!isSidebarOpen && 'justify-center'}`}>
-            <div className="w-9 h-9 rounded-xl bg-white text-[#052e08] flex items-center justify-center shrink-0">
-              <Shield size={18} />
+        {/* Bottom User Card */}
+        <div className="p-3 border-t border-[#2a2a2a] space-y-3">
+          <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a]">
+            <div className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center text-white font-bold text-xs shrink-0">
+              م
             </div>
-            {isSidebarOpen && (
-              <div className="overflow-hidden">
-                <p className="text-sm font-bold truncate">مدير النظام</p>
-                <p className="text-[11px] text-white/60 truncate">{user?.email}</p>
-              </div>
-            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold leading-none">مدير النظام</p>
+              <p className="text-[11px] text-white/50 truncate">Admin</p>
+            </div>
           </div>
-          <button 
-            onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 text-white/80 hover:bg-[var(--danger)] hover:text-white rounded-xl transition-all text-sm font-medium border border-transparent hover:border-white/10 ${!isSidebarOpen && 'justify-center'}`}
-          >
-            <LogOut size={18} strokeWidth={1.9} />
-            {isSidebarOpen && <span>تسجيل الخروج</span>}
-          </button>
+
+          <div className="flex gap-2">
+            <button
+              onClick={handleLogout}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a] text-white/70 hover:bg-white/5 hover:text-white text-xs font-bold transition-colors"
+            >
+              تسجيل الخروج
+              <LogOut size={14} />
+            </button>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="w-11 h-11 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a] flex items-center justify-center text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+            >
+              {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Mobile Drawer */}
       {isMobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />
-          <aside className="absolute right-0 top-0 bottom-0 w-[300px] bg-[#052e08] text-white border-l border-white/10 p-5 flex flex-col">
-            <div className="flex items-center justify-between mb-8">
-              <Logo size="sm" variant="light" />
-              <button onClick={() => setIsMobileOpen(false)} className="p-2 hover:bg-white/10 rounded-xl"><X size={22} /></button>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />
+          <aside className="absolute right-0 top-0 bottom-0 w-[280px] bg-[#141414] border-l border-[#2a2a2a] flex flex-col">
+            <div className="h-[72px] px-6 flex items-center justify-between border-b border-[#2a2a2a]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#0f9d62] flex items-center justify-center">
+                  <ShieldCheck size={20} className="text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-black text-[15px]">Renova Admin</span>
+                  <span className="text-[11px] text-white/50">لوحة التحكم</span>
+                </div>
+              </div>
+              <button onClick={() => setIsMobileOpen(false)} className="p-2 hover:bg-white/10 rounded-xl">
+                <X size={20} />
+              </button>
             </div>
-            <nav className="space-y-1 flex-grow">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMobileOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all text-sm ${
-                    location.pathname === item.path 
-                      ? 'bg-white text-[#052e08] font-bold' 
-                      : 'text-white/70 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  <item.icon size={20} strokeWidth={1.9} />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+            <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto mt-2">
+              {navItems.map(item => {
+                const active = isActive(item.path);
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[13px] font-bold ${
+                      active ? 'bg-[#0f9d62] text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <item.icon size={18} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
             </nav>
-            <button 
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-3 text-white/80 hover:bg-white/10 rounded-xl mt-6"
-            >
-              <LogOut size={20} strokeWidth={1.9} />
-              <span className="font-medium">تسجيل الخروج</span>
-            </button>
+            <div className="p-3 border-t border-[#2a2a2a] space-y-3">
+              <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a]">
+                <div className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center text-xs font-bold">م</div>
+                <div>
+                  <p className="text-xs font-bold">مدير النظام</p>
+                  <p className="text-[11px] text-white/50">Admin</p>
+                </div>
+              </div>
+              <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a] text-xs font-bold">
+                تسجيل الخروج <LogOut size={14} />
+              </button>
+            </div>
           </aside>
         </div>
       )}
 
-      {/* Main Content */}
-      <main className="flex-grow flex flex-col h-screen overflow-hidden bg-[var(--bg-main)]">
-        <header className="h-[68px] border-b border-[var(--border)] bg-[var(--bg-card)] flex items-center justify-between px-4 md:px-6 shrink-0">
-          <div className="flex items-center gap-3">
-            <button 
-              className="lg:hidden p-2 rounded-xl bg-[var(--bg-item)] border border-[var(--border)] text-[var(--text-muted)]"
-              onClick={() => setIsMobileOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu size={20} />
-            </button>
-            <h1 className="text-lg md:text-xl font-black">
-              {navItems.find(item => item.path === location.pathname)?.label || 'لوحة التحكم'}
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-xs text-[var(--text-muted)] bg-[var(--bg-item)] border border-[var(--border)] px-3 py-1.5 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              {new Intl.DateTimeFormat('ar-EG', { dateStyle: 'full' }).format(new Date())}
-            </div>
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-[#052e08] ring-1 ring-black/5 hidden sm:block">
-              <img src="/logo.jpeg" alt="ReNova" className="w-full h-full object-cover" />
+      {/* Main */}
+      <main className="flex-1 flex flex-col min-h-screen overflow-hidden bg-[#0a0a0a]">
+        {/* Mobile Top Bar */}
+        <div className="lg:hidden h-[56px] flex items-center justify-between px-4 bg-[#141414] border-b border-[#2a2a2a] shrink-0 sticky top-0 z-30">
+          <button onClick={() => setIsMobileOpen(true)} className="p-2 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a]">
+            <Menu size={18} />
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="font-black text-sm">Renova Admin</span>
+            <div className="w-7 h-7 rounded-lg bg-[#0f9d62] flex items-center justify-center">
+              <ShieldCheck size={14} className="text-white" />
             </div>
           </div>
-        </header>
+        </div>
 
-        <div className="flex-grow overflow-y-auto p-4 md:p-6 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scrollbar-hide">
           <Outlet />
         </div>
       </main>

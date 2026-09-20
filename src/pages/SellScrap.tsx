@@ -88,8 +88,8 @@ const SellScrap: React.FC = () => {
       <ToastContainer />
       
       <div className="flex flex-col items-center text-center space-y-4">
-        <div className="w-20 h-20 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] rounded-3xl flex items-center justify-center transform -rotate-6">
-          <Recycle size={40} />
+        <div className="w-20 h-20 bg-[#0f9d62] rounded-3xl flex items-center justify-center shadow-lg shadow-green-900/20">
+          <Recycle size={40} className="text-white animate-spin-slow" strokeWidth={1.9} style={{ transformOrigin: 'center' }} />
         </div>
         <div className="space-y-2">
           <h1 className="text-4xl font-black">طلب بيع خردة</h1>

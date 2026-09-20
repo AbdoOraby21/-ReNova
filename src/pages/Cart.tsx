@@ -5,6 +5,7 @@ import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
 import { useRequestStore } from '../stores/requestStore';
 import { useToast } from '../components/common/Toast';
+import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 
 const Cart: React.FC = () => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCartStore();
@@ -115,7 +116,7 @@ const Cart: React.FC = () => {
                 className="bg-[var(--bg-card)] border border-[var(--border)] p-4 rounded-3xl flex items-center gap-6"
               >
                 <div className="w-24 h-24 bg-[var(--bg-item)] rounded-2xl overflow-hidden shrink-0">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <SafeImage src={item.image} alt={item.name} fallback={FALLBACK_IMAGE} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-grow space-y-1">
                   <h3 className="font-bold text-lg">{item.name}</h3>

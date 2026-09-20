@@ -15,6 +15,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { useThemeStore } from '../stores/themeStore';
 import Logo from '../components/common/Logo';
+import AboutModal from '../components/common/AboutModal';
 
 const UserLayout: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -23,6 +24,7 @@ const UserLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -65,6 +67,12 @@ const UserLayout: React.FC = () => {
                   طلباتي
                 </Link>
               )}
+              <button onClick={() => setAboutOpen(true)} className={`${navLink('/about')} px-3 py-2 rounded-full hover:bg-[var(--bg-item)]`}>
+                من نحن
+              </button>
+              <Link to="/about" className={`${navLink('/about')} px-3 py-2 rounded-full ${location.pathname==='/about'?'bg-[var(--primary-soft)]':''} hidden lg:inline-flex`}>
+                عن المنصة
+              </Link>
             </nav>
           </div>
 
@@ -77,8 +85,8 @@ const UserLayout: React.FC = () => {
               {isDarkMode ? <Sun size={18} strokeWidth={1.9} /> : <Moon size={18} strokeWidth={1.9} />}
             </button>
 
-            <Link to="/favorites" aria-label="Favorites" className="hidden sm:flex p-2.5 rounded-xl bg-[var(--bg-item)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]/20 hover:bg-[var(--primary-soft)] transition-all duration-200">
-              <Heart size={18} strokeWidth={1.9} />
+            <Link to="/favorites" aria-label="Favorites - قائمة الرغبات" title="المفضلة" className="hidden sm:flex p-2.5 rounded-xl bg-[var(--bg-item)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]/20 hover:bg-[var(--primary-soft)] transition-all duration-200">
+              <Heart size={18} strokeWidth={2} fill="none" className="shrink-0" style={{ fill: 'none' }} />
             </Link>
 
             <Link to="/cart" aria-label="Cart" className="p-2.5 rounded-xl bg-[var(--bg-item)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]/20 hover:bg-[var(--primary-soft)] transition-all duration-200 relative">
@@ -134,6 +142,8 @@ const UserLayout: React.FC = () => {
             <nav className="flex flex-col gap-1.5 text-sm font-medium">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className={`py-3 px-4 rounded-xl flex items-center justify-between ${location.pathname==='/'?'bg-[var(--primary-soft)] text-[var(--primary)]':'hover:bg-[var(--bg-item)]'}`}>الرئيسية <span className="text-xs opacity-50">›</span></Link>
               <Link to="/sell-scrap" onClick={() => setIsMenuOpen(false)} className={`py-3 px-4 rounded-xl flex items-center justify-between ${location.pathname==='/sell-scrap'?'bg-[var(--primary-soft)] text-[var(--primary)]':'hover:bg-[var(--bg-item)]'}`}>بيع خردة <Recycle size={16} /></Link>
+              <button onClick={() => { setAboutOpen(true); setIsMenuOpen(false); }} className="py-3 px-4 rounded-xl hover:bg-[var(--bg-item)] text-right flex items-center justify-between w-full">من نحن <Leaf size={16} className="text-[var(--primary)]" /></button>
+              <Link to="/about" onClick={() => setIsMenuOpen(false)} className={`py-3 px-4 rounded-xl ${location.pathname==='/about'?'bg-[var(--primary-soft)] text-[var(--primary)]':'hover:bg-[var(--bg-item)]'}`}>عن المنصة</Link>
               {isAuthenticated && (
                 <>
                   <Link to="/my-orders" onClick={() => setIsMenuOpen(false)} className="py-3 px-4 hover:bg-[var(--bg-item)] rounded-xl">طلباتي</Link>
@@ -178,6 +188,8 @@ const UserLayout: React.FC = () => {
                 <Link to="/sell-scrap" className="hover:text-white transition-colors">بيع خردة</Link>
                 <Link to="/cart" className="hover:text-white transition-colors">سلة المشتريات</Link>
                 <Link to="/favorites" className="hover:text-white transition-colors">المفضلة</Link>
+                <button onClick={() => setAboutOpen(true)} className="text-right hover:text-white transition-colors">من نحن</button>
+                <Link to="/about" className="hover:text-white transition-colors">عن المنصة</Link>
               </div>
             </div>
             <div className="space-y-3">
@@ -195,9 +207,10 @@ const UserLayout: React.FC = () => {
           <div className="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50">
             <span>© {new Date().getFullYear()} ReNova. جميع الحقوق محفوظة.</span>
             <div className="flex items-center gap-6">
+              <button onClick={() => setAboutOpen(true)} className="hover:text-white transition-colors">من نحن</button>
+              <Link to="/about" className="hover:text-white transition-colors">عن المنصة</Link>
               <Link to="#" className="hover:text-white transition-colors">سياسة الخصوصية</Link>
               <Link to="#" className="hover:text-white transition-colors">الشروط والأحكام</Link>
-              <Link to="#" className="hover:text-white transition-colors">عن المنصة</Link>
             </div>
           </div>
         </div>
@@ -213,6 +226,8 @@ const UserLayout: React.FC = () => {
           بيع خردة
         </span>
       </Link>
+
+      <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </div>
   );
 };

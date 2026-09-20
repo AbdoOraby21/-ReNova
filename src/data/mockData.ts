@@ -17,6 +17,9 @@ export const mockScrapTypes: ScrapType[] = [
   { id: '6', name: 'أجهزة إلكترونية' },
 ];
 
+export const FALLBACK_PRODUCT_IMAGE =
+  'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=800&auto=format&fit=crop';
+
 export const mockProducts: Product[] = [
   {
     id: '1',
@@ -24,7 +27,7 @@ export const mockProducts: Product[] = [
     description: 'كرسي مريح مصنوع من خشب الصنوبر المعاد تدويره بتصميم عصري وأنيق يناسب جميع الديكورات.',
     price: 450,
     category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -33,7 +36,7 @@ export const mockProducts: Product[] = [
     description: 'مكتب دراسة متين تم ترميمه بعناية ليضيف لمسة كلاسيكية إلى مكتبك الخاص.',
     price: 1200,
     category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -42,7 +45,7 @@ export const mockProducts: Product[] = [
     description: 'مصباح فريد مصنوع من أجزاء معدنية قديمة، صديق للبيئة ويوفر إضاءة دافئة.',
     price: 250,
     category: 'إضاءة',
-    image: 'https://images.unsplash.com/photo-1507473884658-66a3f6973aa6?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -51,7 +54,7 @@ export const mockProducts: Product[] = [
     description: 'حقيبة مصنوعة 100% من أقمشة معاد تدويرها، متينة ومثالية للتسوق اليومي.',
     price: 120,
     category: 'أزياء وإكسسوارات',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -60,7 +63,7 @@ export const mockProducts: Product[] = [
     description: 'رف بسيط وأنيق مصنوع من خشب البليت المعاد تدويره، سهل التركيب.',
     price: 180,
     category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1594026112284-12bb3d210d97?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -69,7 +72,7 @@ export const mockProducts: Product[] = [
     description: 'طاولة صغيرة مصنوعة من خشب البلوط المعاد تدويره، مثالية بجانب السرير.',
     price: 350,
     category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -78,16 +81,16 @@ export const mockProducts: Product[] = [
     description: 'مصباح فني مصنوع من زجاجات زجاجية معاد تدويرها، يضفي جواً ساحراً على المكان.',
     price: 150,
     category: 'إضاءة',
-    image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
     id: '8',
     name: 'إكسسوارات معاد تدويرها',
-    description: 'مجموعة من الإكسسوارات المصنوعة يدوياً من مواد مستدامة.',
+    description: 'مجموعة من الإكسسوارات المصنوعة يدوياً من مواد مستدامة وصديقة للبيئة.',
     price: 85,
     category: 'أزياء وإكسسوارات',
-    image: 'https://images.unsplash.com/photo-1617038220319-276d3ac92e4c?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -96,7 +99,7 @@ export const mockProducts: Product[] = [
     description: 'منظم مصنوع من أسلاك النحاس والحديد المعاد تدويرها.',
     price: 75,
     category: 'أدوات مكتبية',
-    image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1493934558415-9d19f0b2b4d2?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
   {
@@ -105,7 +108,7 @@ export const mockProducts: Product[] = [
     description: 'ساعة حائط فريدة مصنوعة من قطع خشبية متنوعة معاد تدويرها.',
     price: 220,
     category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1507646227500-4d389b0012be?q=80&w=800&auto=format&fit=crop',
     createdAt: new Date().toISOString(),
   },
 ];

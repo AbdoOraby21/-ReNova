@@ -23,9 +23,17 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        navigate(from, { replace: true });
+        const currentUser = useAuthStore.getState().user;
+        // Admin should go directly to dashboard as required
+        if (currentUser?.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          // If user came from protected route, respect it; otherwise go to home dashboard
+          const target = from !== '/login' && from !== '/admin/login' ? from : '/';
+          navigate(target, { replace: true });
+        }
       } else {
-        setError('بيانات الدخول غير صحيحة. استخدم 123456 ككلمة مرور.');
+        setError('بيانات الدخول غير صحيحة. استخدم user@renova.demo / 123456 أو admin@renova.demo / admin123');
       }
     } catch (err) {
       setError('حدث خطأ أثناء تسجيل الدخول.');

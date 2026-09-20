@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Recycle, ShoppingBag, Clock, Package, ChevronLeft } from 'lucide-react';
 import { useRequestStore } from '../stores/requestStore';
 import { useAuthStore } from '../stores/authStore';
+import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 
 const MyOrders: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'scrap' | 'purchase'>('scrap');
@@ -133,7 +134,7 @@ const MyOrders: React.FC = () => {
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                   {order.items.map((item, idx) => (
                     <div key={idx} className="w-12 h-12 rounded-lg overflow-hidden border border-[var(--border)] shrink-0">
-                      <img src={item.image} alt="" className="w-full h-full object-cover" />
+                      <SafeImage src={item.image} alt="" fallback={FALLBACK_IMAGE} className="w-full h-full object-cover" />
                     </div>
                   ))}
                   {order.items.length > 5 && (

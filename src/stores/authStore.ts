@@ -25,24 +25,61 @@ export const useAuthStore = create<AuthStore>()(
       users: [],
 
       seedUsers: () => {
-        if (get().users.length === 0) {
+        const current = get().users;
+        let users = [...current];
+        let changed = false;
+
+        // Ensure demo accounts always exist (idempotent, fixes stale localStorage)
+        for (const demo of mockUsers) {
+          const exists = users.find(u => u.email.toLowerCase() === demo.email.toLowerCase());
+          if (!exists) {
+            users.push(demo);
+            changed = true;
+          } else if (exists.role !== demo.role || exists.name !== demo.name) {
+            // repair corrupted role/name
+            users = users.map(u => u.email.toLowerCase() === demo.email.toLowerCase() ? { ...u, role: demo.role, name: demo.name } : u);
+            changed = true;
+          }
+        }
+
+        if (users.length === 0) {
           set({ users: mockUsers });
+        } else if (changed) {
+          set({ users });
+        } else if (current.length === 0) {
+          set({ users: mockUsers });
+        }
+
+        // Also repair current authenticated user if role mismatched
+        const { user } = get();
+        if (user) {
+          const fresh = users.find(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
+          if (fresh && fresh.role !== user.role) {
+            set({ user: fresh });
+          }
         }
       },
 
       login: async (email, password) => {
-        // Simulated login logic
-        const user = get().users.find(u => u.email === email && password === '123456');
-        if (user && user.role === 'user') {
-          set({ user, isAuthenticated: true });
-          return true;
-        }
-        return false;
+        get().seedUsers();
+        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedPass = password.trim();
+        // Demo user accepts 123456 ; also allow admin123 for admin via regular login for flexibility
+        const user = get().users.find(u => u.email.toLowerCase() === normalizedEmail);
+        if (!user) return false;
+        const isValidPass = normalizedPass === '123456' || (user.role === 'admin' && normalizedPass === 'admin123');
+        if (!isValidPass) return false;
+        // For regular login route, allow both roles but prefer user; admin will be redirected to /admin by caller
+        set({ user, isAuthenticated: true });
+        return true;
       },
 
       adminLogin: async (email, password) => {
-        const user = get().users.find(u => u.email === email && password === 'admin123');
-        if (user && user.role === 'admin') {
+        get().seedUsers();
+        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedPass = password.trim();
+        const user = get().users.find(u => u.email.toLowerCase() === normalizedEmail && u.role === 'admin');
+        if (user && normalizedPass === 'admin123') {
           set({ user, isAuthenticated: true });
           return true;
         }
@@ -81,12 +118,12 @@ export const useAuthStore = create<AuthStore>()(
 
       register: async (name, email, phone, _password) => {
         const users = get().users;
-        if (users.find(u => u.email === email)) return false;
+        if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) return false;
 
         const newUser: User = {
           id: `user-${Date.now()}`,
           name,
-          email,
+          email: email.trim().toLowerCase(),
           phone,
           role: 'user',
           createdAt: new Date().toISOString(),

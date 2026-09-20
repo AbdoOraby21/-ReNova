@@ -17,6 +17,7 @@ import Cart from './pages/Cart';
 import SellScrap from './pages/SellScrap';
 import MyOrders from './pages/MyOrders';
 import Favorites from './pages/Favorites';
+import About from './pages/About';
 
 // Admin Pages
 import AdminLogin from './pages/admin/AdminLogin';
@@ -47,6 +48,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/about" element={<About />} />
           
           <Route element={<ProtectedRoute />}>
             <Route path="/cart" element={<Cart />} />
