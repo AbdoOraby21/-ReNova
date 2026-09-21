@@ -10,7 +10,6 @@ import {
   LogOut,
   Menu,
   X,
-  ShieldCheck,
   Sun,
   Moon,
 } from 'lucide-react';
@@ -47,8 +46,15 @@ const AdminLayout: React.FC = () => {
         {/* Logo Header */}
         <div className="h-[72px] px-6 flex items-center justify-between border-b border-[#2a2a2a] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#0f9d62] flex items-center justify-center">
-              <ShieldCheck size={20} className="text-white" />
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-[#052e08] ring-1 ring-white/10 shrink-0">
+              <img
+                src="/logo.jpeg"
+                alt="ReNova logo"
+                loading="eager"
+                decoding="async"
+                className="h-full w-full object-cover"
+                style={{ objectPosition: 'center 38%' }}
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-black text-[15px] leading-none">Renova Admin</span>
@@ -114,8 +120,15 @@ const AdminLayout: React.FC = () => {
           <aside className="absolute right-0 top-0 bottom-0 w-[280px] bg-[#141414] border-l border-[#2a2a2a] flex flex-col">
             <div className="h-[72px] px-6 flex items-center justify-between border-b border-[#2a2a2a]">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#0f9d62] flex items-center justify-center">
-                  <ShieldCheck size={20} className="text-white" />
+                <div className="w-9 h-9 rounded-xl overflow-hidden bg-[#052e08] ring-1 ring-white/10 shrink-0">
+                  <img
+                    src="/logo.jpeg"
+                    alt="ReNova logo"
+                    loading="eager"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: 'center 38%' }}
+                  />
                 </div>
                 <div className="flex flex-col">
                   <span className="font-black text-[15px]">Renova Admin</span>
@@ -169,8 +182,15 @@ const AdminLayout: React.FC = () => {
           </button>
           <div className="flex items-center gap-2">
             <span className="font-black text-sm">Renova Admin</span>
-            <div className="w-7 h-7 rounded-lg bg-[#0f9d62] flex items-center justify-center">
-              <ShieldCheck size={14} className="text-white" />
+            <div className="w-7 h-7 rounded-lg overflow-hidden bg-[#052e08] ring-1 ring-white/10 shrink-0">
+              <img
+                src="/logo.jpeg"
+                alt="ReNova logo"
+                loading="eager"
+                decoding="async"
+                className="h-full w-full object-cover"
+                style={{ objectPosition: 'center 38%' }}
+              />
             </div>
           </div>
         </div>
