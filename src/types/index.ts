@@ -27,7 +27,10 @@ export interface Product {
   price: number;
   category: string;
   image: string;
+  condition?: string;
+  status?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export type RequestStatus = 'جديد' | 'تم التواصل' | 'جاري التفاوض' | 'مقبول' | 'مكتمل' | 'مرفوض';

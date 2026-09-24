@@ -6,7 +6,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useToast } from '../../components/common/Toast';
 
 const Settings: React.FC = () => {
-  const { categories, addCategory, deleteCategory, resetToDemo: resetProducts } = useProductStore();
+  const { categories, addCategory, deleteCategory } = useProductStore();
   const { scrapTypes, addScrapType, deleteScrapType, resetToDemo: resetRequests } = useRequestStore();
   const { seedUsers } = useAuthStore();
   const { showToast, ToastContainer } = useToast();
@@ -15,12 +15,25 @@ const Settings: React.FC = () => {
   const [newType, setNewType] = useState('');
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
-  const handleAddCategory = (e: React.FormEvent) => {
+  const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newCat.trim()) {
-      addCategory(newCat.trim());
-      setNewCat('');
-      showToast('تمت إضافة القسم بنجاح');
+      try {
+        await addCategory(newCat.trim());
+        setNewCat('');
+        showToast('تمت إضافة القسم بنجاح');
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : 'فشل إضافة القسم');
+      }
+    }
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    try {
+      await deleteCategory(id);
+      showToast('تم حذف القسم بنجاح');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'فشل حذف القسم');
     }
   };
 
@@ -34,7 +47,7 @@ const Settings: React.FC = () => {
   };
 
   const handleResetData = () => {
-    resetProducts();
+    // Products now live in the real database and are never reset to mock data.
     resetRequests();
     seedUsers();
     setIsResetModalOpen(false);
@@ -70,7 +83,7 @@ const Settings: React.FC = () => {
               <div key={cat.id} className="flex items-center justify-between p-4 bg-[var(--bg-item)] rounded-2xl group hover:border-[var(--primary)] border border-transparent transition-all">
                 <span className="font-bold">{cat.name}</span>
                 <button 
-                  onClick={() => deleteCategory(cat.id)}
+                  onClick={() => handleDeleteCategory(cat.id)}
                   className="p-2 text-[var(--danger)] hover:bg-[var(--danger)] hover:bg-opacity-10 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
                 >
                   <Trash2 size={18} />
@@ -123,7 +136,7 @@ const Settings: React.FC = () => {
               منطقة الخطر: إعادة ضبط البيانات
             </h3>
             <p className="text-[var(--text-muted)] text-sm">
-              سيقوم هذا الإجراء بحذف جميع التغييرات الحالية واستعادة بيانات العرض الأولية (Seed Data).
+              سيقوم هذا الإجراء بحذف تغييرات بيانات العرض الحالية (الطلبات والمستخدمون التجريبيون) واستعادتها. منتجات المتجر محفوظة في قاعدة البيانات ولن تتأثر.
             </p>
           </div>
           <button 
@@ -146,7 +159,7 @@ const Settings: React.FC = () => {
             <div className="space-y-2">
               <h2 className="text-2xl font-black">هل أنت متأكد؟</h2>
               <p className="text-[var(--text-muted)]">
-                سيتم مسح جميع البيانات الحالية واستبدالها ببيانات العرض الأصلية. لا يمكن التراجع عن هذا الإجراء.
+                سيتم مسح بيانات العرض الحالية (الطلبات والمستخدمون التجريبيون) واستبدالها بالبيانات الأصلية. منتجات المتجر في قاعدة البيانات لن تتأثر ولا يمكن التراجع عن هذا الإجراء.
               </p>
             </div>
             <div className="flex flex-col gap-3 pt-4">

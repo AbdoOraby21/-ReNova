@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Heart, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { useFavoritesStore } from '../stores/favoritesStore';
@@ -8,10 +8,14 @@ import { Link } from 'react-router-dom';
 import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 
 const Favorites: React.FC = () => {
-  const { products } = useProductStore();
+  const { products, fetchProducts } = useProductStore();
   const { favoriteIds, toggleFavorite } = useFavoritesStore();
   const { addItem } = useCartStore();
   const { showToast, ToastContainer } = useToast();
+
+  useEffect(() => {
+    if (products.length === 0) fetchProducts();
+  }, [products.length, fetchProducts]);
 
   const favoriteProducts = products.filter(p => favoriteIds.includes(p.id));
 

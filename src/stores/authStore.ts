@@ -2,11 +2,14 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User } from '../types';
 import { mockUsers } from '../data/mockData';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   users: User[];
+  /** True when a Supabase Auth session exists (required for DB writes). */
+  supabaseSessionActive: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   adminLogin: (email: string, password: string) => Promise<boolean>;
   googleLogin: () => Promise<void>;
@@ -15,6 +18,7 @@ interface AuthStore {
   logout: () => void;
   updateUser: (user: User) => void;
   seedUsers: () => void;
+  restoreSupabaseSession: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -23,6 +27,7 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
       isAuthenticated: false,
       users: [],
+      supabaseSessionActive: false,
 
       seedUsers: () => {
         const current = get().users;
@@ -80,7 +85,21 @@ export const useAuthStore = create<AuthStore>()(
         const normalizedPass = password.trim();
         const user = get().users.find(u => u.email.toLowerCase() === normalizedEmail && u.role === 'admin');
         if (user && normalizedPass === 'admin123') {
-          set({ user, isAuthenticated: true });
+          // Local demo gate passes — now establish a Supabase session so RLS
+          // allows product writes. Never blocks local login if Auth isn't set up.
+          let sessionActive = false;
+          if (isSupabaseConfigured && supabase) {
+            try {
+              const { data, error } = await supabase.auth.signInWithPassword({
+                email: normalizedEmail,
+                password: normalizedPass,
+              });
+              sessionActive = !error && !!data.session;
+            } catch {
+              sessionActive = false;
+            }
+          }
+          set({ user, isAuthenticated: true, supabaseSessionActive: sessionActive });
           return true;
         }
         return false;
@@ -133,8 +152,23 @@ export const useAuthStore = create<AuthStore>()(
         return true;
       },
 
-      logout: () => set({ user: null, isAuthenticated: false }),
+      logout: () => {
+        if (supabase) supabase.auth.signOut().catch(() => undefined);
+        set({ user: null, isAuthenticated: false, supabaseSessionActive: false });
+      },
       updateUser: (user) => set({ user }),
+      restoreSupabaseSession: async () => {
+        if (!isSupabaseConfigured || !supabase) {
+          set({ supabaseSessionActive: false });
+          return;
+        }
+        try {
+          const { data } = await supabase.auth.getSession();
+          set({ supabaseSessionActive: !!data.session });
+        } catch {
+          set({ supabaseSessionActive: false });
+        }
+      },
     }),
     {
       name: 'renova_auth',

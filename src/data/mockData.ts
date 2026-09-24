@@ -1,12 +1,7 @@
-import { Product, User, ScrapRequest, PurchaseOrder, Category, ScrapType } from '../types';
+import { User, ScrapRequest, PurchaseOrder, ScrapType } from '../types';
 
-export const mockCategories: Category[] = [
-  { id: '1', name: 'أثاث وديكور' },
-  { id: '2', name: 'أدوات مكتبية' },
-  { id: '3', name: 'أزياء وإكسسوارات' },
-  { id: '4', name: 'إضاءة' },
-  { id: '5', name: 'أدوات منزلية' },
-];
+// NOTE: Product catalog mock data (mockProducts / mockCategories) was removed.
+// Products now live in the Supabase database (see supabase/schema.sql).
 
 export const mockScrapTypes: ScrapType[] = [
   { id: '1', name: 'بلاستيك' },
@@ -15,102 +10,6 @@ export const mockScrapTypes: ScrapType[] = [
   { id: '4', name: 'ألومنيوم' },
   { id: '5', name: 'ورق وكرتون' },
   { id: '6', name: 'أجهزة إلكترونية' },
-];
-
-export const FALLBACK_PRODUCT_IMAGE =
-  'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=800&auto=format&fit=crop';
-
-export const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'كرسي خشبي معاد تدويره',
-    description: 'كرسي مريح مصنوع من خشب الصنوبر المعاد تدويره بتصميم عصري وأنيق يناسب جميع الديكورات.',
-    price: 450,
-    category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'مكتب خشبي مستعمل',
-    description: 'مكتب دراسة متين تم ترميمه بعناية ليضيف لمسة كلاسيكية إلى مكتبك الخاص.',
-    price: 1200,
-    category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'مصباح مكتبي معاد تدويره',
-    description: 'مصباح فريد مصنوع من أجزاء معدنية قديمة، صديق للبيئة ويوفر إضاءة دافئة.',
-    price: 250,
-    category: 'إضاءة',
-    image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    name: 'حقيبة قماشية مستدامة',
-    description: 'حقيبة مصنوعة 100% من أقمشة معاد تدويرها، متينة ومثالية للتسوق اليومي.',
-    price: 120,
-    category: 'أزياء وإكسسوارات',
-    image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    name: 'رف حائط خشبي',
-    description: 'رف بسيط وأنيق مصنوع من خشب البليت المعاد تدويره، سهل التركيب.',
-    price: 180,
-    category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '6',
-    name: 'طاولة جانبية',
-    description: 'طاولة صغيرة مصنوعة من خشب البلوط المعاد تدويره، مثالية بجانب السرير.',
-    price: 350,
-    category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '7',
-    name: 'مصباح ديكوري',
-    description: 'مصباح فني مصنوع من زجاجات زجاجية معاد تدويرها، يضفي جواً ساحراً على المكان.',
-    price: 150,
-    category: 'إضاءة',
-    image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '8',
-    name: 'إكسسوارات معاد تدويرها',
-    description: 'مجموعة من الإكسسوارات المصنوعة يدوياً من مواد مستدامة وصديقة للبيئة.',
-    price: 85,
-    category: 'أزياء وإكسسوارات',
-    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '9',
-    name: 'منظم مكتب معدني',
-    description: 'منظم مصنوع من أسلاك النحاس والحديد المعاد تدويرها.',
-    price: 75,
-    category: 'أدوات مكتبية',
-    image: 'https://images.unsplash.com/photo-1493934558415-9d19f0b2b4d2?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '10',
-    name: 'ساعة حائط خشبية',
-    description: 'ساعة حائط فريدة مصنوعة من قطع خشبية متنوعة معاد تدويرها.',
-    price: 220,
-    category: 'أثاث وديكور',
-    image: 'https://images.unsplash.com/photo-1507646227500-4d389b0012be?q=80&w=800&auto=format&fit=crop',
-    createdAt: new Date().toISOString(),
-  },
 ];
 
 export const mockUsers: User[] = [

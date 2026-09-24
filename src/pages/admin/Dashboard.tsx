@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ShoppingCart, Users, Package, DollarSign, Activity, Recycle, ShoppingBag } from 'lucide-react';
 import { useProductStore } from '../../stores/productStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useRequestStore } from '../../stores/requestStore';
 
 const Dashboard: React.FC = () => {
-  const { products } = useProductStore();
+  const { products, fetchProducts } = useProductStore();
   const { users } = useAuthStore();
   const { scrapRequests, purchaseOrders } = useRequestStore();
+
+  useEffect(() => {
+    if (products.length === 0) fetchProducts();
+  }, [products.length, fetchProducts]);
 
   const totalSales = purchaseOrders.reduce((sum, o) => sum + o.total, 0);
 
@@ -15,7 +19,7 @@ const Dashboard: React.FC = () => {
   const topStats = [
     {
       label: 'إجمالي العملاء',
-      value: users.filter(u => u.role === 'user').length || 2,
+      value: users.filter(u => u.role === 'user').length,
       icon: Users,
       color: 'text-[#3b82f6]',
       bg: 'bg-[#3b82f6]/15',
@@ -23,7 +27,7 @@ const Dashboard: React.FC = () => {
     },
     {
       label: 'المنتجات المعروضة',
-      value: products.length || 6,
+      value: products.length,
       icon: Package,
       color: 'text-[#22c55e]',
       bg: 'bg-[#22c55e]/15',
@@ -39,7 +43,7 @@ const Dashboard: React.FC = () => {
     },
     {
       label: 'إجمالي العمليات',
-      value: scrapRequests.length + purchaseOrders.length || 1,
+      value: scrapRequests.length + purchaseOrders.length,
       icon: Activity,
       color: 'text-[#a78bfa]',
       bg: 'bg-[#a78bfa]/15',

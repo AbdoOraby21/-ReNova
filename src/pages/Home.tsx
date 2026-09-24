@@ -9,15 +9,15 @@ import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 const logoImg = '/logo.jpeg';
 
 const Home: React.FC = () => {
-  const { products, categories, selectedCategory, setSelectedCategory, seedProducts } = useProductStore();
+  const { products, categories, selectedCategory, setSelectedCategory, fetchProducts, loading, error, clearError } = useProductStore();
   const { toggleFavorite, isFavorite } = useFavoritesStore();
   const { addItem } = useCartStore();
   const { showToast, ToastContainer } = useToast();
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    seedProducts();
-  }, [seedProducts]);
+    fetchProducts();
+  }, [fetchProducts]);
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'الكل' || p.category === selectedCategory;
@@ -142,7 +142,32 @@ const Home: React.FC = () => {
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-[1.5rem] md:rounded-[1.75rem] overflow-hidden animate-pulse">
+                <div className="aspect-square bg-[var(--bg-item)]" />
+                <div className="p-4 md:p-5 space-y-2">
+                  <div className="h-4 bg-[var(--bg-item)] rounded-lg w-3/4" />
+                  <div className="h-3 bg-[var(--bg-item)] rounded-lg w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-16 md:py-20 text-center space-y-4 bg-[var(--bg-card)] border border-dashed border-[var(--border)] rounded-[1.75rem]">
+            <div className="space-y-1 px-4">
+              <h3 className="text-lg font-bold">تعذر تحميل المنتجات</h3>
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed">{error}</p>
+            </div>
+            <button
+              onClick={() => { clearError(); fetchProducts(); }}
+              className="bg-[#0a3d0f] hover:bg-[#052e08] text-white px-6 py-3 rounded-2xl font-bold text-sm transition-colors"
+            >
+              إعادة المحاولة
+            </button>
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product) => (
               <div 
@@ -210,7 +235,11 @@ const Home: React.FC = () => {
             </div>
             <div className="space-y-1">
               <h3 className="text-lg font-bold">لا توجد منتجات</h3>
-              <p className="text-[var(--text-muted)] text-sm">لم نجد أي منتجات تطابق بحثك حالياً.</p>
+              <p className="text-[var(--text-muted)] text-sm">
+                {search || selectedCategory !== 'الكل'
+                  ? 'لم نجد أي منتجات تطابق بحثك حالياً.'
+                  : 'لا توجد منتجات منشورة حالياً. عُد قريباً.'}
+              </p>
             </div>
             <button 
               onClick={() => { setSearch(''); setSelectedCategory('الكل'); }}
