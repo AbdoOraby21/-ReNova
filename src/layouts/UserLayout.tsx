@@ -11,13 +11,16 @@ import {
   X,
   Leaf,
   ChevronDown,
-  Package
+  Package,
+  Phone,
+  Mail
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { useThemeStore } from '../stores/themeStore';
 import Logo from '../components/common/Logo';
 import AboutModal from '../components/common/AboutModal';
+import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_SOCIALS } from '../data/contact';
 
 const UserLayout: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -257,11 +260,32 @@ const UserLayout: React.FC = () => {
             <div className="space-y-3">
               <h4 className="font-bold text-sm">تواصل معنا</h4>
               <div className="flex flex-col gap-2 text-sm text-white/70">
-                <span>support@renova.demo</span>
-                <span dir="ltr" className="text-left">+20 100 123 4567</span>
-                <div className="flex gap-3 pt-2">
-                  <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"><Leaf size={16} /></span>
-                  <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"><Recycle size={16} /></span>
+                <a href={`mailto:${CONTACT_EMAIL}`} dir="ltr" className="inline-flex items-center gap-2 text-left hover:text-white transition-colors w-fit max-w-full break-all">
+                  <Mail size={15} className="shrink-0 text-[#22c55e]" />
+                  {CONTACT_EMAIL}
+                </a>
+                {CONTACT_PHONES.map((phone) => (
+                  <a key={phone} href={`tel:${phone}`} dir="ltr" className="inline-flex items-center gap-2 text-left hover:text-white transition-colors w-fit max-w-full break-all">
+                    <Phone size={15} className="shrink-0 text-[#22c55e]" />
+                    {phone}
+                  </a>
+                ))}
+                <div className="flex flex-wrap gap-2.5 pt-2">
+                  {CONTACT_SOCIALS.map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`ReNova على ${s.label}`}
+                      title={s.label}
+                      className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-[#22c55e] hover:text-white focus-visible:bg-[#22c55e] focus-visible:outline-2 focus-visible:outline-white/60 active:bg-[#16a34a] transition-colors"
+                    >
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+                        <path d={s.path} />
+                      </svg>
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
