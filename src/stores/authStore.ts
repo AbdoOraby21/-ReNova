@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import type { User as SupabaseAuthUser } from '@supabase/supabase-js';
 import { User } from '../types';
-import { mockUsers } from '../data/mockData';
 import { supabase, isSupabaseConfigured, NOT_CONFIGURED_ERROR } from '../lib/supabase';
 
 /**
@@ -60,7 +59,7 @@ function requireClient() {
 interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
-  /** Demo list used by the Admin Customers/Dashboard display only — never for auth decisions. */
+  /** Reserved display list (stays empty — fake demo customers were removed). */
   users: User[];
   /** True when a Supabase Auth session exists. */
   supabaseSessionActive: boolean;
@@ -77,7 +76,7 @@ interface AuthStore {
 
 let authListenerStarted = false;
 
-export const useAuthStore = create<AuthStore>()((set, get) => ({
+export const useAuthStore = create<AuthStore>()((set) => ({
   user: null,
   isAuthenticated: false,
   users: [],
@@ -85,7 +84,9 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
   initialized: false,
 
   seedUsers: () => {
-    if (get().users.length === 0) set({ users: mockUsers });
+    // Intentionally seeds nothing: fake demo customers were removed from
+    // the production UI. The Customers list renders an honest empty state
+    // until a real customer directory backend exists. Kept for callers.
   },
 
   initAuth: () => {
@@ -170,10 +171,16 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       const client = requireClient();
       const normalizedEmail = email.trim().toLowerCase();
       // Role is NEVER accepted from the client: every signup is a normal user.
+      // Confirmation email redirects back to this site's login page:
+      // production (https://renova-platform.myvnc.com/login) or local dev
+      // origin — derived at runtime, never hardcoded.
       const { data, error } = await client.auth.signUp({
         email: normalizedEmail,
         password,
-        options: { data: { name: name.trim(), phone: phone.trim() } },
+        options: {
+          data: { name: name.trim(), phone: phone.trim() },
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
       });
       if (error) return { ok: false, message: friendlyError(error.message, 'حدث خطأ أثناء إنشاء الحساب.') };
       // Supabase returns an empty identities array when the email is already taken.

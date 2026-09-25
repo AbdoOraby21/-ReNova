@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ScrapRequest, PurchaseOrder, RequestStatus, PurchaseStatus, ScrapType } from '../types';
-import { mockScrapRequests, mockPurchaseOrders, mockScrapTypes } from '../data/mockData';
+import { mockScrapTypes } from '../data/mockData';
 
 interface RequestStore {
   scrapRequests: ScrapRequest[];
@@ -15,7 +15,7 @@ interface RequestStore {
   updatePurchaseStatus: (id: string, status: PurchaseStatus) => void;
   addScrapType: (name: string) => void;
   deleteScrapType: (id: string) => void;
-  resetToDemo: () => void;
+  clearDisplayData: () => void;
 }
 
 export const useRequestStore = create<RequestStore>()(
@@ -26,12 +26,11 @@ export const useRequestStore = create<RequestStore>()(
       scrapTypes: [],
 
       seedRequests: () => {
-        if (get().scrapRequests.length === 0) {
-          set({
-            scrapRequests: mockScrapRequests,
-            purchaseOrders: mockPurchaseOrders,
-            scrapTypes: mockScrapTypes,
-          });
+        // Production honesty: only the static scrap-type reference list is
+        // seeded. Orders and requests start empty and fill with REAL
+        // user-submitted records; lists render honest empty states.
+        if (get().scrapTypes.length === 0) {
+          set({ scrapTypes: mockScrapTypes });
         }
       },
 
@@ -91,11 +90,13 @@ export const useRequestStore = create<RequestStore>()(
         });
       },
 
-      resetToDemo: () => {
+      clearDisplayData: () => {
+        // Clears submitted display records; keeps the static reference list.
+        // Never restores fake demo records.
         set({
-          scrapRequests: mockScrapRequests,
-          purchaseOrders: mockPurchaseOrders,
-          scrapTypes: mockScrapTypes,
+          scrapRequests: [],
+          purchaseOrders: [],
+          scrapTypes: get().scrapTypes.length > 0 ? get().scrapTypes : mockScrapTypes,
         });
       },
     }),

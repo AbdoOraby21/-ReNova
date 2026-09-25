@@ -85,6 +85,12 @@ const Customers: React.FC = () => {
               ))}
             </tbody>
           </table>
+          {filteredUsers.length === 0 && (
+            <div className="py-16 text-center">
+              <User size={32} className="mx-auto mb-3 text-[var(--text-muted)] opacity-40" />
+              <p className="text-[var(--text-muted)] text-sm">لا توجد بيانات متاحة حاليًا</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -146,29 +146,21 @@ const Products: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between">
-          <div>
+      {/* Header — single Add button, always rendered, responsive (never viewport-hidden) */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
             <h1 className="text-xl font-black text-white">إدارة المنتجات</h1>
             <p className="text-xs text-white/50 mt-1">إدارة منتجات المتجر، إضافة منتجات جديدة أو تعديل الحالية</p>
           </div>
           <button
             onClick={() => openModal()}
             disabled={!canWrite}
-            className="hidden md:flex items-center gap-2 bg-[#0f9d62] hover:bg-[#0d8a56] disabled:opacity-40 text-white px-5 py-2.5 rounded-xl text-xs font-black transition-colors shadow-md"
+            className="flex w-full sm:w-auto items-center justify-center gap-2 bg-[#0f9d62] hover:bg-[#0d8a56] disabled:opacity-40 text-white px-5 py-2.5 rounded-xl text-xs font-black transition-colors shadow-md shrink-0"
           >
             <Plus size={16} /> إضافة منتج
           </button>
         </div>
-        {/* Mobile Add Button */}
-        <button
-          onClick={() => openModal()}
-          disabled={!canWrite}
-          className="md:hidden w-fit flex items-center gap-2 bg-[#0f9d62] disabled:opacity-40 text-white px-4 py-2 rounded-xl text-xs font-bold"
-        >
-          <Plus size={14} /> إضافة منتج
-        </button>
       </div>
 
       {isSupabaseConfigured && !supabaseSessionActive && (

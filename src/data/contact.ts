@@ -1,4 +1,4 @@
-export const CONTACT_EMAIL = 'support@renova.demo';
+export const CONTACT_EMAIL = 'renovateam.support@gmail.com';
 
 export const CONTACT_PHONES = ['01123302529', '01019048949', '01069620611'];
 

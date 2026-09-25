@@ -157,7 +157,7 @@ const Dashboard: React.FC = () => {
               <p className="text-[11px] text-white/40 mt-1">تفصيل حالات استلام الخردة</p>
             </div>
             <div className="text-left shrink-0">
-              <span className="text-xl sm:text-2xl font-black text-[#22c55e] leading-none tabular-nums">{scrapRequests.length || 1}</span>
+              <span className="text-xl sm:text-2xl font-black text-[#22c55e] leading-none tabular-nums">{scrapRequests.length || 0}</span>
               <p className="text-[10px] text-white/40 whitespace-nowrap">إجمالي الطلبات</p>
             </div>
           </div>
@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
                 key={st.key}
                 label={st.label}
                 count={scrapCounts[st.key] || 0}
-                total={scrapRequests.length || 1}
+                total={scrapRequests.length || 0}
                 color={st.color}
                 dot={st.dot}
               />
@@ -177,8 +177,8 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Activity */}
-      {(scrapRequests.length > 0 || purchaseOrders.length > 0) && (
+      {/* Recent Activity — honest empty state when there are no real records */}
+      {(scrapRequests.length > 0 || purchaseOrders.length > 0) ? (
         <div className="min-w-0 bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-4 sm:p-6">
           <h3 className="text-sm font-black text-white mb-4">آخر النشاطات</h3>
           <div className="space-y-3 min-w-0">
@@ -200,6 +200,11 @@ const Dashboard: React.FC = () => {
                 </div>
               ))}
           </div>
+        </div>
+      ) : (
+        <div className="min-w-0 bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-4 sm:p-6">
+          <h3 className="text-sm font-black text-white mb-2">آخر النشاطات</h3>
+          <p className="text-xs text-white/40">لا توجد بيانات متاحة حاليًا</p>
         </div>
       )}
     </div>

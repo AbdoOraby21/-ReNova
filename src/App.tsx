@@ -34,7 +34,8 @@ function App() {
   const { seedRequests } = useRequestStore();
 
   useEffect(() => {
-    // Seed local demo data (admin display/requests) + init real auth + load catalog
+    // Init real auth + load real catalog. Display-record stores start empty
+    // (honest empty states) and fill only with real user submissions.
     seedUsers();
     initAuth();
     fetchProducts();

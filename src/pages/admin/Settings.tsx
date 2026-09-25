@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { Plus, Trash2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useProductStore } from '../../stores/productStore';
 import { useRequestStore } from '../../stores/requestStore';
-import { useAuthStore } from '../../stores/authStore';
 import { useToast } from '../../components/common/Toast';
 
 const Settings: React.FC = () => {
   const { categories, addCategory, deleteCategory } = useProductStore();
-  const { scrapTypes, addScrapType, deleteScrapType, resetToDemo: resetRequests } = useRequestStore();
-  const { seedUsers } = useAuthStore();
+  const { scrapTypes, addScrapType, deleteScrapType, clearDisplayData } = useRequestStore();
   const { showToast, ToastContainer } = useToast();
   
   const [newCat, setNewCat] = useState('');
@@ -47,11 +45,12 @@ const Settings: React.FC = () => {
   };
 
   const handleResetData = () => {
-    // Products now live in the real database and are never reset to mock data.
-    resetRequests();
-    seedUsers();
+    // Products live in the real database and are never touched here.
+    // Clears submitted display records (orders/requests). Never restores
+    // fake demo records.
+    clearDisplayData();
     setIsResetModalOpen(false);
-    showToast('تم إعادة ضبط بيانات العرض بنجاح');
+    showToast('تم مسح بيانات العرض بنجاح');
   };
 
   return (
@@ -133,10 +132,10 @@ const Settings: React.FC = () => {
           <div className="space-y-2 text-center md:text-right">
             <h3 className="text-xl font-bold text-[var(--danger)] flex items-center justify-center md:justify-start gap-2">
               <AlertTriangle size={24} />
-              منطقة الخطر: إعادة ضبط البيانات
+              منطقة الخطر: مسح بيانات العرض
             </h3>
             <p className="text-[var(--text-muted)] text-sm">
-              سيقوم هذا الإجراء بحذف تغييرات بيانات العرض الحالية (الطلبات والمستخدمون التجريبيون) واستعادتها. منتجات المتجر محفوظة في قاعدة البيانات ولن تتأثر.
+              سيقوم هذا الإجراء بمسح بيانات العرض الحالية (الطلبات المُرسلة). منتجات المتجر محفوظة في قاعدة البيانات ولن تتأثر.
             </p>
           </div>
           <button 
@@ -144,7 +143,7 @@ const Settings: React.FC = () => {
             className="bg-[var(--danger)] hover:bg-red-600 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 transition-all transform active:scale-95 shadow-xl shadow-red-900/20"
           >
             <RefreshCw size={20} />
-            إعادة ضبط بيانات العرض
+            مسح بيانات العرض
           </button>
         </div>
       </div>
@@ -159,7 +158,7 @@ const Settings: React.FC = () => {
             <div className="space-y-2">
               <h2 className="text-2xl font-black">هل أنت متأكد؟</h2>
               <p className="text-[var(--text-muted)]">
-                سيتم مسح بيانات العرض الحالية (الطلبات والمستخدمون التجريبيون) واستبدالها بالبيانات الأصلية. منتجات المتجر في قاعدة البيانات لن تتأثر ولا يمكن التراجع عن هذا الإجراء.
+                سيتم مسح بيانات العرض الحالية (الطلبات المُرسلة). منتجات المتجر في قاعدة البيانات لن تتأثر ولا يمكن التراجع عن هذا الإجراء.
               </p>
             </div>
             <div className="flex flex-col gap-3 pt-4">
@@ -167,7 +166,7 @@ const Settings: React.FC = () => {
                 onClick={handleResetData}
                 className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl font-black transition-all"
               >
-                نعم، قم بإعادة الضبط
+                نعم، قم بالمسح
               </button>
               <button 
                 onClick={() => setIsResetModalOpen(false)}
