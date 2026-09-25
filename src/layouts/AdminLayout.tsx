@@ -6,6 +6,7 @@ import {
   Mail,
   ShoppingCart,
   Package,
+  BarChart3,
   Settings,
   LogOut,
   Menu,
@@ -38,6 +39,7 @@ const AdminLayout: React.FC = () => {
     { icon: Mail, label: 'طلبات البيع', path: '/admin/requests' },
     { icon: ShoppingCart, label: 'طلبات الشراء', path: '/admin/purchase-requests' },
     { icon: Package, label: 'المنتجات', path: '/admin/products' },
+    { icon: BarChart3, label: 'التقارير', path: '/admin/reports' },
     { icon: Settings, label: 'الإعدادات', path: '/admin/settings' },
   ];
 

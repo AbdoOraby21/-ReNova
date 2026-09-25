@@ -112,11 +112,17 @@ const Login: React.FC = () => {
           </button>
         </form>
 
-        <p className="text-center text-[var(--text-muted)] text-sm pt-1">
-          ليس لديك حساب؟{' '}
-          <Link to="/register" className="text-[var(--primary)] font-bold hover:underline underline-offset-4">
-            إنشاء حساب جديد
+        <p className="text-center text-[var(--text-muted)] text-sm pt-1 flex items-center justify-center gap-2">
+          <Link to="/forgot-password" className="text-[var(--primary)] font-bold hover:underline underline-offset-4">
+            نسيت كلمة المرور؟
           </Link>
+          <span aria-hidden="true">•</span>
+          <span>
+            ليس لديك حساب؟{' '}
+            <Link to="/register" className="text-[var(--primary)] font-bold hover:underline underline-offset-4">
+              إنشاء حساب جديد
+            </Link>
+          </span>
         </p>
       </div>
     </div>

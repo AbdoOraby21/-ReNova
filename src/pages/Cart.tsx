@@ -4,6 +4,8 @@ import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, CheckCircle } from 'lucide
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
 import { useRequestStore } from '../stores/requestStore';
+import { useProductStore } from '../stores/productStore';
+import { createSupabaseOrder } from '../lib/orders';
 import { useToast } from '../components/common/Toast';
 import SafeImage, { FALLBACK_IMAGE } from '../components/common/SafeImage';
 
@@ -25,9 +27,9 @@ const Cart: React.FC = () => {
     setCheckoutStep('checkout');
   };
 
-  const handleConfirmOrder = (e: React.FormEvent) => {
+  const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) return;
 
     const order = {
@@ -40,7 +42,25 @@ const Cart: React.FC = () => {
       paymentMethod: 'الدفع عند الاستلام' as const,
     };
 
+    // Local record first (existing behavior preserved), then best-effort
+    // real Supabase transaction row. Checkout never fails because of the DB.
     addPurchaseOrder(order);
+    try {
+      const catalog = useProductStore.getState().products;
+      await createSupabaseOrder(
+        user.id,
+        items.map((i) => ({
+          productId: i.productId,
+          name: i.name,
+          category: catalog.find((p) => p.id === i.productId)?.category ?? '',
+          price: i.price,
+          quantity: i.quantity,
+        })),
+        getTotal(),
+      );
+    } catch {
+      // Intentionally ignored — local confirmation already succeeded.
+    }
     clearCart();
     setCheckoutStep('success');
     showToast('تم تأكيد طلبك بنجاح');

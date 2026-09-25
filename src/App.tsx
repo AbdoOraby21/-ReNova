@@ -13,6 +13,8 @@ import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Cart from './pages/Cart';
 import SellScrap from './pages/SellScrap';
 import MyOrders from './pages/MyOrders';
@@ -25,6 +27,7 @@ import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
 import Requests from './pages/admin/Requests';
 import PurchaseRequests from './pages/admin/PurchaseRequests';
+import Reports from './pages/admin/Reports';
 import Customers from './pages/admin/Customers';
 import Settings from './pages/admin/Settings';
 
@@ -50,6 +53,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/about" element={<About />} />
           
           <Route element={<ProtectedRoute />}>
@@ -69,6 +74,7 @@ function App() {
             <Route path="products" element={<Products />} />
             <Route path="requests" element={<Requests />} />
             <Route path="purchase-requests" element={<PurchaseRequests />} />
+            <Route path="reports" element={<Reports />} />
             <Route path="customers" element={<Customers />} />
             <Route path="settings" element={<Settings />} />
           </Route>
