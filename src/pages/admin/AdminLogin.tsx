@@ -16,9 +16,9 @@ const AdminLogin: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      const success = await adminLogin(email, password);
-      if (success) navigate('/admin', { replace: true });
-      else setError('بيانات دخول المشرف غير صحيحة. استخدم admin@renova.demo / admin123');
+      const result = await adminLogin(email, password);
+      if (result.ok) navigate('/admin', { replace: true });
+      else setError(result.message || 'بيانات دخول المشرف غير صحيحة.');
     } catch {
       setError('حدث خطأ أثناء تسجيل الدخول.');
     } finally {
@@ -67,7 +67,6 @@ const AdminLogin: React.FC = () => {
         </form>
 
         <div className="text-center space-y-3">
-          <p className="text-[10px] text-white/30 bg-[#141414] border border-[#2a2a2a] rounded-xl py-2 px-2 font-mono">admin@renova.demo / admin123</p>
           <button onClick={() => navigate('/')} className="text-[11px] text-white/40 hover:text-white flex items-center gap-1.5 mx-auto">
             العودة للموقع <ArrowRight size={12} />
           </button>

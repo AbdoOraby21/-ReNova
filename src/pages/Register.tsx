@@ -13,6 +13,7 @@ const Register: React.FC = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuthStore();
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
 
     if (formData.password !== formData.confirmPassword) {
       setError('كلمات المرور غير متطابقة');
@@ -29,17 +31,21 @@ const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      const success = await register(
+      const result = await register(
         formData.name,
         formData.email,
         formData.phone,
         formData.password
       );
 
-      if (success) {
-        navigate('/');
+      if (result.ok) {
+        if (result.needsConfirmation) {
+          setSuccess('تم إنشاء الحساب. يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.');
+        } else {
+          navigate('/');
+        }
       } else {
-        setError('هذا البريد الإلكتروني مستخدم بالفعل');
+        setError(result.message || 'حدث خطأ أثناء إنشاء الحساب');
       }
     } catch (err) {
       setError('حدث خطأ أثناء إنشاء الحساب');
@@ -68,6 +74,15 @@ const Register: React.FC = () => {
           <div className="bg-[var(--danger)]/10 border border-[var(--danger)]/20 text-[var(--danger)] p-3.5 rounded-2xl flex items-start gap-2.5 text-sm">
             <AlertCircle className="shrink-0 mt-0.5" size={18} />
             <p>{error}</p>
+          </div>
+        )}
+
+        {success && (
+          <div className="bg-[var(--primary)]/10 border border-[var(--primary)]/25 text-[var(--primary)] p-3.5 rounded-2xl text-sm leading-relaxed">
+            <p>{success}</p>
+            <Link to="/login" className="font-bold hover:underline underline-offset-4">
+              الذهاب إلى تسجيل الدخول
+            </Link>
           </div>
         )}
 

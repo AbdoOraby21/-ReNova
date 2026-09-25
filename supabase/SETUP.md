@@ -14,10 +14,20 @@ Supabase project once, then give the frontend its public credentials.
 2. Paste the full contents of `supabase/schema.sql` and run it.
 3. This creates:
    - `public.categories` + `public.products` (with `updated_at` trigger + indexes)
-   - RLS enabled: **public read** for everyone, **writes for signed-in admins only**
-   - Storage bucket `product-images` (public) with public-read + admin-write policies
+   - `public.admins` allow-list + `public.is_admin()` check (database-level
+     admin authorization — enforced by RLS, not by the frontend)
+   - RLS enabled: **public read** for everyone, **writes admin-only**
+     (per-operation INSERT/UPDATE/DELETE policies gated on `is_admin()`)
+   - Storage bucket `product-images` (public) with public-read + admin-only
+     upload/replace/delete policies
    - 11 e-waste categories + 10 realistic seed products (real DB rows, editable
      from the Admin Dashboard — not mock data)
+
+> **Existing deployment?** Do NOT re-run `schema.sql` seeds blindly.
+> Instead run `supabase/migrations/20260925_admin_only_writes.sql` once in
+> the SQL Editor. It only replaces the write policies (idempotent), touches
+> no product/category data, and ends with a check that must return
+> `admin_count = 1`.
 
 ## 3. Create the admin Auth user
 
@@ -26,6 +36,14 @@ Writes (create / edit / delete / image upload) require a signed-in session:
 1. **Authentication → Users → Add user → Create new user**
 2. Email: `admin@renova.demo`, password of your choice
 3. The Admin Dashboard signs into Supabase with these same credentials.
+4. Allow-list the admin for database writes (owner SQL Editor, once):
+   ```sql
+   insert into public.admins (user_id)
+   select id from auth.users where lower(email) = lower('admin@renova.demo')
+   on conflict (user_id) do nothing;
+   ```
+   (Skip if you already ran the migration — it bootstraps this automatically.
+   Writes stay blocked until this row exists, even with a valid admin login.)
 
 ## 4. Connect the frontend (local, never committed)
 

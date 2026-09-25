@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, LogIn, Globe, Apple, AlertCircle, Sparkles } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import Logo from '../components/common/Logo';
 
@@ -9,7 +9,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, googleLogin, appleLogin } = useAuthStore();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,8 +21,8 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
+      const result = await login(email, password);
+      if (result.ok) {
         const currentUser = useAuthStore.getState().user;
         // Admin should go directly to dashboard as required
         if (currentUser?.role === 'admin') {
@@ -33,21 +33,10 @@ const Login: React.FC = () => {
           navigate(target, { replace: true });
         }
       } else {
-        setError('بيانات الدخول غير صحيحة. استخدم user@renova.demo / 123456 أو admin@renova.demo / admin123');
+        setError(result.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة.');
       }
     } catch (err) {
       setError('حدث خطأ أثناء تسجيل الدخول.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSocialLogin = async (provider: 'google' | 'apple') => {
-    setLoading(true);
-    try {
-      if (provider === 'google') await googleLogin();
-      else await appleLogin();
-      navigate(from, { replace: true });
     } finally {
       setLoading(false);
     }
@@ -85,7 +74,7 @@ const Login: React.FC = () => {
                 <input 
                   type="email" 
                   required
-                  placeholder="user@renova.demo"
+                  placeholder="example@mail.com"
                   className="w-full pr-11 pl-4 py-3.5 rounded-2xl bg-[var(--bg-item)] border border-[var(--border)] focus:bg-[var(--bg-card)] transition-all"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -123,44 +112,12 @@ const Login: React.FC = () => {
           </button>
         </form>
 
-        <div className="relative py-1">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[var(--border)]"></div>
-          </div>
-          <div className="relative flex justify-center text-xs">
-            <span className="bg-[var(--bg-card)] px-3 text-[var(--text-muted)] font-medium">أو عبر</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button 
-            onClick={() => handleSocialLogin('google')}
-            className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-item)] hover:bg-[var(--bg-card)] hover:border-[var(--primary)]/20 hover:text-[var(--primary)] transition-all text-sm font-bold"
-          >
-            <Globe size={18} className="text-[#ea4335]" />
-            <span>Google</span>
-          </button>
-          <button 
-            onClick={() => handleSocialLogin('apple')}
-            className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-item)] hover:bg-[var(--bg-card)] hover:border-[var(--primary)]/20 transition-all text-sm font-bold"
-          >
-            <Apple size={18} />
-            <span>Apple</span>
-          </button>
-        </div>
-
         <p className="text-center text-[var(--text-muted)] text-sm pt-1">
           ليس لديك حساب؟{' '}
           <Link to="/register" className="text-[var(--primary)] font-bold hover:underline underline-offset-4">
             إنشاء حساب جديد
           </Link>
         </p>
-
-        <div className="text-center">
-          <p className="text-[11px] text-[var(--text-muted)] bg-[var(--bg-item)] border border-[var(--border)] rounded-xl py-2.5 px-3">
-            حساب تجريبي: <span className="font-mono font-bold text-[var(--text-main)]">user@renova.demo</span> / <span className="font-mono font-bold text-[var(--text-main)]">123456</span>
-          </p>
-        </div>
       </div>
     </div>
   );

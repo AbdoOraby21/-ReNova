@@ -29,17 +29,17 @@ import Customers from './pages/admin/Customers';
 import Settings from './pages/admin/Settings';
 
 function App() {
-  const { seedUsers, restoreSupabaseSession } = useAuthStore();
+  const { seedUsers, initAuth } = useAuthStore();
   const { fetchProducts } = useProductStore();
   const { seedRequests } = useRequestStore();
 
   useEffect(() => {
-    // Seed local demo data (auth/requests) + load real product catalog
+    // Seed local demo data (admin display/requests) + init real auth + load catalog
     seedUsers();
-    restoreSupabaseSession();
+    initAuth();
     fetchProducts();
     seedRequests();
-  }, [seedUsers, restoreSupabaseSession, fetchProducts, seedRequests]);
+  }, [seedUsers, initAuth, fetchProducts, seedRequests]);
 
   return (
     <BrowserRouter>

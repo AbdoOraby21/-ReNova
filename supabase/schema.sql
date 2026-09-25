@@ -57,15 +57,75 @@ drop policy if exists "public read products" on public.products;
 create policy "public read products"
   on public.products for select to anon, authenticated using (true);
 
--- Only signed-in admins can WRITE (create an Auth user for the admin,
--- e.g. admin@renova.demo, and sign in from the Admin Dashboard)
+-- ---------- Admin authorization (database-level, not frontend-only) ----------
+-- public.admins is a DB allow-list of admin user_ids. RLS is enabled with
+-- NO policies for anon/authenticated (default-deny), so only the table
+-- owner / service_role can read or modify it — authenticated users can
+-- never grant themselves admin. Never use user_metadata for authorization.
+create table if not exists public.admins (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  added_at timestamptz not null default now()
+);
+
+alter table public.admins enable row level security;
+
+-- Bootstrap: if the admin Auth user already exists, allow-list it now.
+-- (If you create the admin user AFTER running this file, run the same
+-- INSERT from supabase/migrations/20260925_admin_only_writes.sql once.)
+insert into public.admins (user_id)
+select id from auth.users where lower(email) = lower('admin@renova.demo')
+on conflict (user_id) do nothing;
+
+-- Trusted check: auth.uid() comes from the verified JWT subject and the
+-- allow-list is owner-guarded, so this is enforced by the database itself.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (select 1 from public.admins a where a.user_id = auth.uid());
+$$;
+
+revoke all on function public.is_admin() from public, anon, authenticated;
+grant execute on function public.is_admin() to authenticated;
+
+-- Only allow-listed admins can WRITE (per-operation policies).
+-- Public (anon + authenticated) keeps SELECT via the policies above.
 drop policy if exists "admin write categories" on public.categories;
-create policy "admin write categories"
-  on public.categories for all to authenticated using (true) with check (true);
+drop policy if exists "admin insert categories" on public.categories;
+create policy "admin insert categories"
+  on public.categories for insert to authenticated
+  with check (public.is_admin());
+
+drop policy if exists "admin update categories" on public.categories;
+create policy "admin update categories"
+  on public.categories for update to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+drop policy if exists "admin delete categories" on public.categories;
+create policy "admin delete categories"
+  on public.categories for delete to authenticated
+  using (public.is_admin());
 
 drop policy if exists "admin write products" on public.products;
-create policy "admin write products"
-  on public.products for all to authenticated using (true) with check (true);
+drop policy if exists "admin insert products" on public.products;
+create policy "admin insert products"
+  on public.products for insert to authenticated
+  with check (public.is_admin());
+
+drop policy if exists "admin update products" on public.products;
+create policy "admin update products"
+  on public.products for update to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+drop policy if exists "admin delete products" on public.products;
+create policy "admin delete products"
+  on public.products for delete to authenticated
+  using (public.is_admin());
 
 -- ---------- Storage: product-images bucket ----------
 insert into storage.buckets (id, name, public)
@@ -78,12 +138,23 @@ create policy "public read product images"
   on storage.objects for select to anon, authenticated
   using (bucket_id = 'product-images');
 
--- Signed-in admins can upload / replace / delete product images
+-- Signed-in allow-listed admins can upload / replace / delete product images
 drop policy if exists "admin manage product images" on storage.objects;
-create policy "admin manage product images"
-  on storage.objects for all to authenticated
-  using (bucket_id = 'product-images')
-  with check (bucket_id = 'product-images');
+drop policy if exists "admin upload product images" on storage.objects;
+create policy "admin upload product images"
+  on storage.objects for insert to authenticated
+  with check (bucket_id = 'product-images' and public.is_admin());
+
+drop policy if exists "admin update product images" on storage.objects;
+create policy "admin update product images"
+  on storage.objects for update to authenticated
+  using (bucket_id = 'product-images' and public.is_admin())
+  with check (bucket_id = 'product-images' and public.is_admin());
+
+drop policy if exists "admin delete product images" on storage.objects;
+create policy "admin delete product images"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'product-images' and public.is_admin());
 
 -- ---------- Seed: e-waste categories ----------
 insert into public.categories (name) values
